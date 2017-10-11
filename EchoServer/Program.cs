@@ -29,7 +29,7 @@ namespace EchoServer
             listOfClientsSockets = new List<Socket>();
             TcpListener listener = new TcpListener(IPAddress.Any, 11000);
             listener.Start();
-
+            Console.WriteLine("Ready"); 
             while (true)
             {
                 Socket client = listener.AcceptSocket();
@@ -42,7 +42,7 @@ namespace EchoServer
         public void Server(object obj)
         {
             Socket client = (Socket)obj;
-            Console.WriteLine("Ready");              
+                         
             NetworkStream stream = new NetworkStream(client);
             StreamWriter writer = new StreamWriter(stream, Encoding.ASCII) { AutoFlush = true };
             StreamReader reader = new StreamReader(stream, Encoding.ASCII);
@@ -51,20 +51,31 @@ namespace EchoServer
 
             while (client.Connected)
             {
-                string receivedMessage = reader.ReadLine();
-                DateTime date = DateTime.Now;
+                string data = reader.ReadLine();
+                string[] input = data.Split(' ');
+                int x = int.Parse(input[1]);
+                int y = int.Parse(input[2]);
 
-                if (receivedMessage == "date")
+                switch (input[0])
                 {
-                    Console.WriteLine(date.ToString() + " " + client.LocalEndPoint);
-                }
-                else
-                {
-                    Console.WriteLine("Unknown Command from " + client.LocalEndPoint);
-                }
+                    case "add":
+                        int add = x + y;
+                        Console.WriteLine("Sum " + add); break;
 
+                    case "minus":
+                        int minus = x - y;
+                        Console.WriteLine("Sum " + minus); break;
+                    case "diff":
+                        int diff = x / y;
+                        Console.WriteLine("Sum " + diff); break;
+                    case "exit":
+                        client.Close(); break;
+                    default:
+                        break;
+
+                }
+                client.Close();
             }
-            client.Close();
         }
     }
 }
@@ -100,12 +111,12 @@ namespace EchoServer
 
 
 
-//SKRIVER TID OG DATO MED "time?"
+//SKRIVER TID OG DATO MED "date"
 //string receivedMessage = reader.ReadLine();
 
 //DateTime date = DateTime.Now;
 
-//if (receivedMessage == "time?")
+//if (receivedMessage == "date")
 //{
 //Console.WriteLine(date.ToString());
 //}
